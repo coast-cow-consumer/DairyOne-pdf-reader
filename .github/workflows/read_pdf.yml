@@ -19,6 +19,7 @@ jobs:
         pip install google-api-python-client
         pip install google-auth-httplib2 
         pip install google-auth-oauthlib
+        pip install oauth2client 
         pip install tabula-py
         pip install PyPDF2
         
