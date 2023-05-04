@@ -12,13 +12,22 @@ class GDriveService:
     '''
     def __init__(self):
         self.scopes=['https://www.googleapis.com/auth/drive']
-        self.shared_drive_id = "0AB-fv-UfPPDzUk9PVA"
+        self.shared_drive_id = "XXXXX"
 
-        self.PDF_folder_id = "1fSZbb7SXtV9hzfj3llku49abnLyoJVDf"
-        self.used_PDF_folder_id = "1bMgv-f7Q9blI7vCaX7wrcmKrgxbhTCi6"
-        self.analysis_folder_id = "1Q89MfH12q_RlsvqxG6Rzbf7dO-KbrvGy"
+        #where people should drop the pdfs
+        self.ANALYSIS_folder_id = "XXXXX"
+        self.TFA_folder_id = "XXXXX"
+        self.FERMENT_folder_id = "XXXXX"
 
-        keyfile = os.environ.get('LB_DRIVE_KEY')
+        self.PDF_folder_id = "XXXXX"
+        self.used_PDF_folder_id = "XXXXX"
+
+        #destination for processed data
+        self.analysis_folder_id = "XXXXX"
+        self.tfa_folder_id = "XXXXX"
+        self.ferment_folder_id = "XXXXX"
+
+        keyfile = os.environ.get('DRIVE_KEY')
         creds = ServiceAccountCredentials.from_json_keyfile_name(keyfile, self.scopes)
         service = build('drive', 'v3', credentials=creds)
         self.GD_serv = service
@@ -34,13 +43,24 @@ class GDriveService:
         files_list = s.files().list(supportsTeamDrives=True, includeTeamDriveItems=True, corpora="drive", driveId=self.shared_drive_id, q="trashed = false").execute()
         return files_list.get("files")
 
-    def List_PDF_Folder(self):
+    def List_PDF_Folder(self, folder_name):
         '''
         list all the files in the folder located at self.PDF_folder_id
 
         returns a list of dictionaries, each entry in the list is a file, and that entry is a dict of all the drive api info about that file
         '''
-        q_string = "'{}' in parents and trashed = false".format(self.PDF_folder_id)
+
+        if folder_name.lower() == "analysis":
+            pdf_folder = self.ANALYSIS_folder_id
+        elif folder_name.lower() == "tfa":
+            pdf_folder = self.TFA_folder_id
+        elif folder_name.lower() == "ferment":
+            pdf_folder = self.FERMENT_folder_id
+        else:
+            print("Error: no folder specified or incorrect name")
+            return
+
+        q_string = "'{}' in parents and trashed = false".format(pdf_folder)
         s = self.GD_serv
         files_list = s.files().list(supportsTeamDrives=True, includeTeamDriveItems=True, corpora="drive", driveId=self.shared_drive_id, q=q_string).execute()
         return files_list.get("files")
