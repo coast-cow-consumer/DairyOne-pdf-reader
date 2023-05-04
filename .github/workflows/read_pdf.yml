@@ -2,6 +2,10 @@ name: Run Python App
 
 on:
   workflow_dispatch
+  # delete 'wotkflow_dispatch' and uncomment below to switch to daily run
+  # this schedule runs at 1:27 everyday, so its easy to see which job ran
+  # schedule:
+    #- cron:  '27 1 * * *'
 
 jobs:
   build:
