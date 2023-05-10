@@ -9,6 +9,12 @@ class GDriveService:
     '''
     Docs for this:
     https://developers.google.com/resources/api-libraries/documentation/drive/v3/python/latest/index.html
+
+
+    NOTE: if a method isnt working or has a 403 error, try adding 'supportsTeamDrives=True, includeTeamDriveItems=True, driveId=self.shared_drive_id,' to the parameters of the method
+        on the docs, it says shared drive is deprecated, but you still have to add it in order for most things to work
+
+
     '''
     def __init__(self):
         self.scopes=['https://www.googleapis.com/auth/drive']
