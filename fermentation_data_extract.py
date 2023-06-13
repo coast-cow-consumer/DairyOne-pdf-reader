@@ -49,7 +49,7 @@ def extract_sample_data(pdf_path, page):
     return sample_data
 
 
-def extract_fermentation_data_and_to_csv(pdf_path):
+def extract_fermentation_data_and_to_csv(pdf_path, dest_path):
     PAGE = number_of_pages(pdf_path)
     for p in range(PAGE):
         page_n = p + 1
@@ -63,10 +63,10 @@ def extract_fermentation_data_and_to_csv(pdf_path):
             sample_data = pd.concat([sample_data, add_data], axis=0, ignore_index=True)
 
         concat_data = pd.concat([sample_data, fermentation_data], axis=1)
-        filename = 'Fermentation_Data/' + f'{sample_number}_f' + '.csv'
-        concat_data.to_csv(filename, index=False)
+        filename = dest_path + f'{sample_number}_f' + '.csv'
+        concat_data.to_csv(filename, index=True, na_rep = 0)
     print("Success!")
 
 
 if __name__ == "__main__":
-    extract_fermentation_data_and_to_csv('Raw_Pdf/fermentation_report.pdf')
+    extract_fermentation_data_and_to_csv('analysis2.pdf', 'ferm_csv/')

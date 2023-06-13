@@ -53,7 +53,6 @@ def extract_sample_data(pdf_path):
     data = tabula.read_pdf(pdf_path, pages = 'all', area=[70,300,216, 700], stream=True)
     columns = np.array(data)[0].T[0]
 
-    "remove : at the end of each word"
     for i in range(len(columns)):
         columns[i] = columns[i][:-1].lower()
     
@@ -74,7 +73,7 @@ def extract_sample_data(pdf_path):
 #     acid_data.to_csv(acid_data_filename, index=False)
 
 
-def extract_tfa_data_and_to_csv(pdf_path):
+def extract_tfa_data_and_to_csv(pdf_path, dest_path):
     acid_data = extract_tfa_data(pdf_path)
     sample_data = extract_sample_data(pdf_path)
     add_data = sample_data.copy()
@@ -84,10 +83,10 @@ def extract_tfa_data_and_to_csv(pdf_path):
         sample_data = pd.concat([sample_data, add_data], axis=0, ignore_index=True)
 
     concat_data = pd.concat([sample_data, acid_data], axis=1)
-    filename = 'TFA_Data/' + f'{sample_number}_t' + '.csv'
-    concat_data.to_csv(filename, index=False)
+    filename = dest_path + f'{sample_number}_t' + '.csv'
+    concat_data.to_csv(filename, index=True, na_rep = 0)
     print("Success!")
 
 
 if __name__ == "__main__":
-    extract_tfa_data_and_to_csv('Raw_Pdf/tfa_data.pdf')
+    extract_tfa_data_and_to_csv('acid.pdf','acid_csv/')

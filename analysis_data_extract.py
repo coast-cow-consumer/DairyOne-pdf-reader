@@ -1,6 +1,6 @@
 # Yiheng Su
 
-import tabula
+import tabula 
 import pandas as pd
 import numpy as np
 import PyPDF2
@@ -8,8 +8,8 @@ import PyPDF2
 sample_number = 0
 
 def number_of_pages(pdf_path):
-    reader = PyPDF2.PdfReader(open(pdf_path, mode='rb' ))
-    return len(reader.pages)
+    reader = PyPDF2.PdfReader(open(pdf_path, mode='rb' )) #initializes reader onto pdf
+    return len(reader.pages) #returns number of pages
 
 
 # area is defined by https://stackoverflow.com/questions/45457054/tabula-extract-tables-by-area-coordinates
@@ -29,7 +29,6 @@ def extract_component_data(pdf_path, page):
             analysis_data.append(s)
     analysis_data[0][0] = 'sample number'
     analysis_data = pd.DataFrame(analysis_data[1:], columns=analysis_data[0])
-    # print(analysis_data)
     return analysis_data
 
 
@@ -55,10 +54,9 @@ def extract_sample_data(pdf_path, page):
         name_and_address += s[0]
     temp.append(name_and_address)
     sample_info2_data = np.array(temp).reshape(1,7)
-    sample_info2_data = pd.DataFrame(sample_info2_data, columns=['date sampled', 'date received', 'date printed', 'ST', 'CO', 'type?', 'name and address'])
+    sample_info2_data = pd.DataFrame(sample_info2_data, columns=['date sampled', 'date received', 'date printed', 'ST', 'CO', 'type', 'name and address'])
 
     sample_data = pd.concat([sample_info1_data, sample_info2_data], axis=1)
-
     return sample_data
 
 
@@ -70,14 +68,29 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         sample_data = extract_sample_data(pdf_path, page_n)
         analysis_data = extract_component_data(pdf_path, page_n)
 
-        sample_filename = dest_folder + f'{sample_number}_s' + '.csv'
-        analysis_filename = dest_folder + f'{sample_number}_a' + '.csv'
+        type = sample_data['type'][0]
+        #check what sample['type'] is here and then add a suffix to name to indicate which, use this in process_pdf to decide where to upload
+        if type.lower().endswith('manure'):
+            suf = '_m'
+        elif type.lower().endswith('other'):
+            suf = '_o'
+        elif type.lower().endswith('dry ae'):
+            suf = '_d'
+        elif type.lower().endswith('tmr'):
+            suf = '_t'
+        elif type.lower().endswith('grain'):
+            suf = '_g'
+        else: 
+            suf = '_?'
 
-        sample_data.to_csv(sample_filename, index=False)
-        analysis_data.to_csv(analysis_filename, index=False)
+
+        sample_filename = dest_folder + f'{sample_number}_s'+suf + '.csv'
+        analysis_filename = dest_folder + f'{sample_number}_a'+suf + '.csv'
+
+        sample_data.to_csv(sample_filename, index=False, na_rep = 0)
+        analysis_data.to_csv(analysis_filename, index=True, na_rep= 0)
     print("PDF read Success!")
 
 
 if __name__ == "__main__":
-    extract_analysis_data_and_to_csv('Raw_Pdf/analysis_report1.pdf')
-    extract_analysis_data_and_to_csv('Raw_Pdf/analysis_report2.pdf')
+    extract_analysis_data_and_to_csv('analysis1.pdf', 'csv/')
