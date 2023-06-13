@@ -1,6 +1,6 @@
 # Dairy-One Extraction Scripts
 #### Gordon Doore, Yiheng Su, Luis Baez
-##### Last updated: 05/12/2023
+##### Last updated: 05/13/2023
 
 This repository contains a collection of Python scripts for extracting specific data from PDF files and saving them in CSV format. The scripts utilize various libraries and methods to extract data from specific areas of the PDF files. 
 
