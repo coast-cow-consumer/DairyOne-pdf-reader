@@ -66,7 +66,7 @@ TODO: fix local folders so easier to understand
 
 4. The selected data extraction script will be executed, and the extracted data will be saved as CSV files in the specified destination folder.
 
-5. Optionally, you can use the g_drive_service.py script to upload the extracted CSV files to Google Drive by providing the appropriate authentication and destination folder details.
+5. You can use the g_drive_service.py script to upload the extracted CSV files to Google Drive by providing the appropriate authentication and destination folder details.
 
 ###### Note: Make sure to properly set up and authenticate the Google Drive API before using the g_drive_service.py script.
 
