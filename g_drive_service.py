@@ -1,7 +1,7 @@
 import io
 import os
-from apiclient.http import MediaIoBaseDownload
-from apiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.http import MediaFileUpload
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -18,25 +18,33 @@ class GDriveService:
     '''
     def __init__(self):
         self.scopes=['https://www.googleapis.com/auth/drive']
-        self.shared_drive_id = "XXXXX"
+        self.shared_drive_id = "0AO91Y0GEzJTeUk9PVA"
 
         #where people should drop the pdfs
-        self.ANALYSIS_folder_id = "XXXXX"
-        self.TFA_folder_id = "XXXXX"
-        self.FERMENT_folder_id = "XXXXX"
+        self.ANALYSIS_folder_id = "1NrRZ6tEIdx63QFbdGokC_0bH29V8aMQH"
+        self.TFA_folder_id = "1ot28BzE_PTNnyLcbTwZpBaPR2bXyLtpS"
+        self.FERMENT_folder_id = "1Fjk0Ee_QDKJAlhgpDdn1K0v53HiJQ7A4"
+        self.MACRO_folder_id = "1iUGzaKqiuc_CanB65pHLCyEi2dx-pAKg"
 
-        self.PDF_folder_id = "XXXXX"
-        self.used_PDF_folder_id = "XXXXX"
+        self.PDF_folder_id = "1QJg2gqGf_QK48w51NwNucWXn9BLpiSYn"
+        self.used_PDF_folder_id = "17rldCORuNDIxYsksGE2U6XtMVz9_O-6I"
 
         #destination for processed data
-        self.analysis_folder_id = "XXXXX"
-        self.tfa_folder_id = "XXXXX"
-        self.ferment_folder_id = "XXXXX"
-
-        keyfile = os.environ.get('DRIVE_KEY')
+        self.tfa_folder_id = "1KmVmrCdHI9uW5fmoWGtXXtgiowjMVpT8"
+        self.ferment_folder_id = "1NGqxRp7TxfMf8wJqsSlCSEkw8FZVjdj0"
+        self.macro_folder_id = "1ACAgpVIQ8qtc8zGlwTeeacVm53N6TKCQ"
+        self.manure_folder_id = "1UQZwSe-Jw9veGuzal95CGkDPgHbeq0Rm"
+        self.other_folder_id = "13pPLT3W57kt33-b3hk0sPhNrCQhEiMQw"
+        self.dryae_folder_id = "1tyALzNWACJBtwTmhqWI1x22KQvt4HCni"
+        self.tmr_folder_id = "17IdBF9j86HRdhmJzeJQKzGO7x_33MZGw"
+        self.grain_folder_id = "1KcDeUMyF7Aw8UwLcrkwW7uHZsyqgYZMj"
+        self.unrecognized_folder_id = "13cFzj2gH28irA69WxsnXQyZqTG7fcFfJ"
+        #command line: export DRIVE_KEY = "path/to/keyfile.json"
+        keyfile = '/Users/gordondoore/Desktop/testfolder/service_acc_key_1.json'
         creds = ServiceAccountCredentials.from_json_keyfile_name(keyfile, self.scopes)
         service = build('drive', 'v3', credentials=creds)
         self.GD_serv = service
+        self.help()
 
     def List_All_Drive_Files(self):
         '''
@@ -62,6 +70,8 @@ class GDriveService:
             pdf_folder = self.TFA_folder_id
         elif folder_name.lower() == "ferment":
             pdf_folder = self.FERMENT_folder_id
+        elif folder_name.lower() == "macro":
+            pdf_folder = self.MACRO_folder_id
         else:
             print("Error: no folder specified or incorrect name")
             return
@@ -157,6 +167,6 @@ class GDriveService:
         help_str += "current drive id: " + self.shared_drive_id + "\n"
         help_str += "current PDF folder id: " + self.PDF_folder_id + "\n"
         help_str += "current Used_pdf folder id: " + self.used_PDF_folder_id + "\n"
-        help_str += "current Analysis folder id: " + self.analysis_folder_id + "\n"
+        help_str += "current Macro folder id: " + self.macro_folder_id + "\n"
         help_str += "------------------------------------\n"
         print(help_str)
