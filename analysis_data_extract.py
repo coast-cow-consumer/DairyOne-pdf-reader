@@ -87,6 +87,13 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         sample_filename = dest_folder + f'{sample_number}_s'+suf + '.csv'
         analysis_filename = dest_folder + f'{sample_number}_a'+suf + '.csv'
 
+        #remove special characters from analysis_data:
+        analysis_data['Components'] = analysis_data['Components'].str.replace('[^a-zA-Z0-9_  ]', '', regex=True)
+        #set nan values to 0:
+        analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].replace('',0)
+        analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].fillna(0)
+        
+        #analysis and sample data to separate csvs
         sample_data.to_csv(sample_filename, index=False, na_rep = 0)
         analysis_data.to_csv(analysis_filename, index=True, na_rep= 0)
     print("PDF read Success!")
