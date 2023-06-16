@@ -4,6 +4,7 @@ import tabula
 import pandas as pd
 import numpy as np
 import PyPDF2
+import re
 
 sample_number = 0
 
@@ -49,13 +50,14 @@ def extract_macro_data(pdf_path, page):
     #reformatting
     data[:,1] = data[:,1]+' '+d1am_label
     #make numpy array of accounts and stack into last col of temp
-    account = np.ones((data.shape[0],1))*int(get_sample_data("analysis2.pdf")['account'])
+    account = np.ones((data.shape[0],1))*int(get_sample_data(pdf_path)['account'])
     #build array of all account # so can stack and associate with each data selection
     #allows us to link sample info and sample data
     account = account.astype(int)
     data = np.hstack((data,account))
     #form pandas dataframe and return
     df =pd.DataFrame(data, columns=['sequence','bname', 'fat', 'protein', 'lactose', 'solids', 'SCC', 'MUN', 'SNF', 'account'])
+    
     return df
 
 def extract_macro_data_and_to_csv(pdf_path, dest_path):
@@ -78,10 +80,13 @@ def extract_macro_data_and_to_csv(pdf_path, dest_path):
     #formatting path
     #save data to its own file with suffix " _m"
     filename = dest_path + f'{sample_number}_m' + '.csv'
-    macro_data.to_csv(filename, index=True, na_rep = 0)
+    macro_data.to_csv(filename, index=False, na_rep = 0)
 
     #save sample info to own file with suffix _ms title will be account#
     sample_file = dest_path +f'{sample_number}_ms'+'.csv'
+
+    sample_data = sample_data.replace('-', 0, inplace=True)
+
     sample_data.to_csv(sample_file, index=False, na_rep = 0)
 
     #finished

@@ -4,6 +4,7 @@ import tabula
 import pandas as pd
 import numpy as np
 import PyPDF2
+import re
 
 sample_number = 0
 
@@ -29,6 +30,23 @@ def extract_component_data(pdf_path, page):
             analysis_data.append(s)
     analysis_data[0][0] = 'sample number'
     analysis_data = pd.DataFrame(analysis_data[1:], columns=analysis_data[0])
+
+    adjusted_crude_protein_row = analysis_data[analysis_data['Components'].str.contains('AdjustedCrudeProtein', regex=True)].index.max()
+
+    #fixing column recognition issue with adjusted crude protein
+    if adjusted_crude_protein_row:
+        numeric_value = re.findall("\d*\.\d*", analysis_data.iloc[adjusted_crude_protein_row, 1])  # Find the numeric value in column 2, row 2
+        text = re.findall("[^\d*\.\d*]", analysis_data.iloc[adjusted_crude_protein_row,1])
+        text = ''.join(text[1:21])
+        analysis_data.iloc[adjusted_crude_protein_row,1] = text
+        analysis_data.iloc[adjusted_crude_protein_row, 3] = analysis_data.iloc[adjusted_crude_protein_row, 2]  # Assign the value from column 3 to column 4
+        if len(numeric_value)>0:
+            analysis_data.iloc[adjusted_crude_protein_row,2] = float(numeric_value[0])  # Convert the numeric value to a double and assign to column 3
+        else:
+            analysis_data.iloc[adjusted_crude_protein_row,2] = 0
+
+    # Print the modified DataFrame
+    print(analysis_data)
     return analysis_data
 
 
@@ -91,6 +109,7 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         analysis_data['Components'] = analysis_data['Components'].str.replace('[^a-zA-Z0-9_  ]', '', regex=True)
         #set nan values to 0:
         analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].replace('',0)
+        analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].replace('[^0-9\.]','', regex = True)
         analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].fillna(0)
         
         #analysis and sample data to separate csvs
@@ -100,4 +119,4 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
 
 
 if __name__ == "__main__":
-    extract_analysis_data_and_to_csv('analysis1.pdf', 'csv/')
+    extract_component_data("analysis_target/analysis1.pdf",2)
