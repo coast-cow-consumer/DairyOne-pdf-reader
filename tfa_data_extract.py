@@ -3,6 +3,7 @@
 import tabula
 import pandas as pd
 import numpy as np
+import datetime
 
 sample_number = 0
 
@@ -60,6 +61,12 @@ def extract_sample_data(pdf_path):
     sample_number = data[0][0]
     
     sample_data = pd.DataFrame(data, columns=columns)
+
+    sample_data[['date sampled','date received', 'date mailed']] = sample_data[['date sampled','date received', 'date mailed']].fillna("01/01/0001")
+    # Convert the date format for 'date sampled', 'date received', and 'date mailed' columns
+    sample_data['date sampled'] = sample_data['date sampled'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
+    sample_data['date received'] = sample_data['date received'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
+    sample_data['date mailed'] = sample_data['date mailed'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
     return sample_data
 
 
@@ -84,9 +91,10 @@ def extract_tfa_data_and_to_csv(pdf_path, dest_path):
 
     concat_data = pd.concat([sample_data, acid_data], axis=1)
     filename = dest_path + f'{sample_number}_t' + '.csv'
-    concat_data.to_csv(filename, index=True, na_rep = 0)
+    concat_data.to_csv(filename, index=True, na_rep=0)
     print("Success!")
 
 
 if __name__ == "__main__":
-    extract_tfa_data_and_to_csv('acid.pdf','acid_csv/')
+    #extract_tfa_data_and_to_csv('acid.pdf','acid_csv/')
+    extract_sample_data('pdf/acid.pdf')
