@@ -170,6 +170,7 @@ if __name__ == "__main__":
 
     # process the files into folder created above
     for f in files_macro_pdf_folder:
+        print(macro_pdf_download_path+f[1])
         extract_macro_data_and_to_csv(macro_pdf_download_path+f[1], macro_csv_path)
 
     # loop through files in analysis folder, and upload those to drive
