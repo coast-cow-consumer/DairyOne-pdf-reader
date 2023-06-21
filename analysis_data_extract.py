@@ -35,7 +35,7 @@ def extract_component_data(pdf_path, page):
 def extract_sample_data(pdf_path, page):
     global sample_number
     raw_sample_info1 = tabula.read_pdf(pdf_path, pages = page, multiple_tables=False, area=[30, 231, 103, 495], stream=True)
-    raw_sample_info2 = tabula.read_pdf(pdf_path, pages = page, multiple_tables=False, area=[116, 28, 237, 230], stream=True)
+    raw_sample_info2 = tabula.read_pdf(pdf_path, pages = page, multiple_tables=False, area=[116, 28, 237, 237], stream=True)
 
     # handle raw_sample_info1_np
     raw_sample_info1_np = np.array(raw_sample_info1)[0]
@@ -57,6 +57,22 @@ def extract_sample_data(pdf_path, page):
     sample_info2_data = pd.DataFrame(sample_info2_data, columns=['date sampled', 'date received', 'date printed', 'ST', 'CO', 'type', 'name and address'])
 
     sample_data = pd.concat([sample_info1_data, sample_info2_data], axis=1)
+    sample_data.drop(['kind', 'type'], axis = 1, inplace = True)
+   
+    institution  = sample_data['name and address'][0].split('-')[0]
+    investigator = sample_data['name and address'][0].split('-')[1].split('|')[0]
+    print(investigator)
+    sample_data[['institution','investigator']] = [institution, investigator]
+
+    sample_data.drop('name and address', axis = 1, inplace = True)
+
+    sample_data[['date sampled', 'date received', 'date printed']]=sample_data[['date sampled', 'date received', 'date printed']].replace("","01/01/0000")
+    sample_data[['date sampled', 'date received', 'date printed']]=sample_data[['date sampled', 'date received', 'date printed']].fillna("01/01/0000")
+
+    sample_data[['ST','CO','institution']]=sample_data[['ST','CO','institution']].replace("","None")
+    sample_data[['ST','CO','institution']]=sample_data[['ST','CO','institution']].fillna("None")
+
+    print(sample_data)
     return sample_data
 
 
@@ -100,4 +116,4 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
 
 
 if __name__ == "__main__":
-    extract_analysis_data_and_to_csv('analysis1.pdf', 'csv/')
+    extract_sample_data('pdf/analysis1.pdf', 1)

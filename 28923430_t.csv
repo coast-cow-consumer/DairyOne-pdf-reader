@@ -1,0 +1,21 @@
+,sample number,Fatty Acid,Carbon,Percent of Total Fatty Acids,Percent of Dry Matter
+0,28923430,Lauric,C12:0,0.11,0.0
+1,0,Myristic,C14:0,3.81,0.08
+2,0,Palmitic,C16:0,47.5,0.93
+3,0,Palmitoleic,C16:1,0.76,0.01
+4,0,Stearic,C18:0,0.96,0.02
+5,0,Oleic,C18:1,15.11,0.29
+6,0,Linoleic,C18:2,3.97,0.08
+7,0,Linolenic,C18:3,0.88,0.02
+8,0,Arachidic,C20:0,0.42,0.01
+9,0,Gadoleic,C20:1,0.11,0.0
+10,0,Eicosapentaenoic (EPA),C20:5,0.32,0.01
+11,0,Behenic,C22:0,0.0,0.0
+12,0,Docosahexanoic (DHA),C22:6,0.0,0.0
+13,0,Lignoceric,C24:0,0.12,0.0
+14,0,Other,0,25.94,0.5
+15,0,Total Fatty Acids,0,100.0,1.93
+16,0,Saturated,0,52.92,0
+17,0,MUFA,0,15.98,0
+18,0,PUFA,0,5.17,0
+19,0,RUFAL,0,0,0.38

@@ -62,31 +62,30 @@ def extract_sample_data(pdf_path):
     sample_data = pd.DataFrame(data, columns=columns)
     return sample_data
 
-
-# def extract_tfa_data_and_to_csv_two_tables(pdf_path):
-#     table_data, acid_data = extract_tfa_data(pdf_path)
-#     filename = pdf_path.split('.')[0]
-#     table_data_filename = filename + '_table_data.csv'
-#     acid_data_filename = filename + '_acid_data.csv'
-
-#     table_data.to_csv(table_data_filename, index=False)
-#     acid_data.to_csv(acid_data_filename, index=False)
-
-
 def extract_tfa_data_and_to_csv(pdf_path, dest_path):
     acid_data = extract_tfa_data(pdf_path)
     sample_data = extract_sample_data(pdf_path)
-    add_data = sample_data.copy()
-    num_rows = acid_data.shape[0]
-
-    for i in range(num_rows-1):
-        sample_data = pd.concat([sample_data, add_data], axis=0, ignore_index=True)
-
-    concat_data = pd.concat([sample_data, acid_data], axis=1)
+    print(sample_data)
+    
+    concat_data = pd.concat([sample_data['sample number'], acid_data], axis=1)
     filename = dest_path + f'{sample_number}_t' + '.csv'
     concat_data.to_csv(filename, index=True, na_rep = 0)
+
+    sample_data[['date sampled', 'date received', 'date mailed']] = sample_data[['date sampled', 'date received', 'date mailed']].fillna('01/01/0000')
+    sample_data[['date sampled', 'date received', 'date mailed']] = sample_data[['date sampled', 'date received', 'date mailed']].replace("",'01/01/0000')
+
+    sample_data[['kind', 'description']] = sample_data[['kind', 'description']].fillna('None')
+    sample_data[['kind', 'description']] = sample_data[['kind', 'description']].replace('', 'None')
+
+    sample_data['sample type'] = ['TFA']
+
+    sample_data['statement id'].fillna(0, inplace = True)
+    sample_data['statement id'].replace("", 0, inplace = True)
+    print(sample_data)
+
+    sample_data.to_csv(dest_path+f'{sample_number}_ts')
     print("Success!")
 
 
 if __name__ == "__main__":
-    extract_tfa_data_and_to_csv('acid.pdf','acid_csv/')
+    extract_tfa_data_and_to_csv('pdf/acid.pdf','')

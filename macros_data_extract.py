@@ -111,14 +111,18 @@ def format_sample_data(sample_data):
     
     #finally we convert to an array, then dataframe
     array = np.array(toFrame).reshape((1, 7))
-    df = pd.DataFrame(array, columns=['author', 'address1', 'address2', 'date sampled', 'date received', 'date analyzed', 'account'], dtype=str)
+
+    df = pd.DataFrame(array, columns=['author', 'address1', 'date sampled', 'date received', 'date analyzed','address2', 'account'], dtype=str)
+    df = df[['author', 'address1', 'address2', 'date sampled', 'date received', 'date analyzed', 'account']]
+    print(df)
     return df
 
     
 
 if __name__ == "__main__":
-    extract_macro_data_and_to_csv('analysis2.pdf', 'macro_csv/')
+    #extract_macro_data_and_to_csv('analysis2.pdf', 'macro_csv/')
     #extract_macro_data('analysis2.pdf', 2)
-
+    data = get_sample_data('pdf/analysis2.pdf')
+    print(data)
 
         
