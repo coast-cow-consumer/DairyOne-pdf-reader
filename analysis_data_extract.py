@@ -54,6 +54,17 @@ def extract_sample_data(pdf_path, page):
     global sample_number
     raw_sample_info1 = tabula.read_pdf(pdf_path, pages = page, multiple_tables=False, area=[30, 231, 103, 495], stream=True)
     raw_sample_info2 = tabula.read_pdf(pdf_path, pages = page, multiple_tables=False, area=[116, 28, 237, 237], stream=True)
+    raw_sample_info3 = tabula.read_pdf(pdf_path,pages = page, multiple_tables=False, area = [400,25,650,233], stream= True)
+
+    #retreive comments
+
+    arr = np.array(raw_sample_info3)
+    string = ""
+    if arr.shape[0] != 0:
+        arr = arr.reshape((arr.shape[1],))
+        for element in arr:
+            string+=element+" "
+        
 
     # handle raw_sample_info1_np
     raw_sample_info1_np = np.array(raw_sample_info1)[0]
@@ -80,7 +91,9 @@ def extract_sample_data(pdf_path, page):
     investigator = sample_data['name and address'][0].split('-')[1].split('|')[0]
     print(investigator)
     sample_data[['institution','investigator']] = [institution, investigator]
-
+    if string == "":
+        string = "None"
+    sample_data['comments']= [string]
     sample_data.drop('name and address', axis = 1, inplace = True)
 
     sample_data[['date_sampled', 'date_received', 'date_printed']]=sample_data[['date_sampled', 'date_received', 'date_printed']].replace("","01/01/2001")
@@ -138,3 +151,4 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
 
 if __name__ == "__main__":
     extract_analysis_data_and_to_csv('pdf/analysis1.pdf', '')
+    #extract_sample_data('pdf/analysis1.pdf', 2)

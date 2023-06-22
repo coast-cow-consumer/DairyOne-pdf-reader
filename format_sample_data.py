@@ -3,7 +3,7 @@ import numpy as np
 
 def add_missing_columns(df):
     desired_columns = ['sample_number', 'sample_type','code', 'description','kind', 'date_sampled', 'date_received',
-                       'date_printed', 'ST', 'CO', 'institution','address1','address2', 'investigator']
+                       'date_printed', 'ST', 'CO', 'institution','address1','address2', 'investigator', 'comments']
     
     existing_columns = df.columns.tolist()
     missing_columns = list(set(desired_columns) - set(existing_columns))

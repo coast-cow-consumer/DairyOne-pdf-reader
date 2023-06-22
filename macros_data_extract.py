@@ -4,7 +4,7 @@ import tabula
 import pandas as pd
 import numpy as np
 import PyPDF2
-import re
+from format_sample_data import add_missing_columns
 
 sample_number = 0
 
@@ -26,8 +26,8 @@ def get_sample_data(pdf_path):
     #formatting code
     sample_data = format_sample_data(sample_data)
     #now extract our sample number, the global variable is updated
-    sample_number = sample_data['account'][0]
-    
+    sample_number = sample_data['sample_number'][0]
+    sample_data['comments']=[f'Test Results for Herd {sample_number}']
     return sample_data
 
         
@@ -50,13 +50,13 @@ def extract_macro_data(pdf_path, page):
     #reformatting
     data[:,1] = data[:,1]+' '+d1am_label
     #make numpy array of accounts and stack into last col of temp
-    account = np.ones((data.shape[0],1))*int(get_sample_data(pdf_path)['account'])
+    account = np.ones((data.shape[0],1))*int(get_sample_data(pdf_path)['sample_number'])
     #build array of all account # so can stack and associate with each data selection
     #allows us to link sample info and sample data
     account = account.astype(int)
     data = np.hstack((data,account))
     #form pandas dataframe and return
-    df =pd.DataFrame(data, columns=['sequence','bname', 'fat', 'protein', 'lactose', 'solids', 'SCC', 'MUN', 'SNF', 'account'])
+    df =pd.DataFrame(data, columns=['sequence','bname', 'fat', 'protein', 'lactose', 'solids', 'SCC', 'MUN', 'SNF', 'sample_number'])
     
     return df
 
@@ -85,8 +85,10 @@ def extract_macro_data_and_to_csv(pdf_path, dest_path):
     #save sample info to own file with suffix _ms title will be account#
     sample_file = dest_path +f'{sample_number}_ms'+'.csv'
 
-    sample_data = sample_data.replace('-', 0, inplace=True)
-
+    sample_data.replace('-', 0, inplace=True)
+    print(sample_data)
+    print(type(sample_data))
+    sample_data = add_missing_columns(sample_data)
     sample_data.to_csv(sample_file, index=False, na_rep = 0)
 
     #finished
@@ -113,21 +115,21 @@ def format_sample_data(sample_data):
     #additionally, we need to rearrange columns so its in an intelligent ordering
     received = toFrame.pop(1)
     toFrame.insert(2, received)
+    toFrame.append('none')
     
     #finally we convert to an array, then dataframe
-    array = np.array(toFrame).reshape((1, 7))
+    array = np.array(toFrame).reshape((1, 8))
 
-    df = pd.DataFrame(array, columns=['investigator', 'address1', 'date_sampled', 'date_received', 'date_analyzed','address2', 'account'], dtype=str)
-    df = df[['investigator', 'address1', 'address2', 'date_sampled', 'date_received', 'date_analyzed', 'account']]
-    print(df)
+    df = pd.DataFrame(array, columns=['investigator', 'address1', 'date_sampled', 'date_received', 'date_analyzed','address2', 'sample_number', 'comments'], dtype=str)
+    df = df[['investigator', 'address1', 'address2', 'date_sampled', 'date_received', 'date_analyzed', 'sample_number', 'comments']]
     return df
 
     
 
 if __name__ == "__main__":
-    #extract_macro_data_and_to_csv('analysis2.pdf', 'macro_csv/')
+    extract_macro_data_and_to_csv('pdf/analysis2.pdf', '')
     #extract_macro_data('analysis2.pdf', 2)
-    data = get_sample_data('pdf/analysis2.pdf')
-    print(data)
+    # data = get_sample_data('pdf/analysis2.pdf')
+    # print(data)
 
         
