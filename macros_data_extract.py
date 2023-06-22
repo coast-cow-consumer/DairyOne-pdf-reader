@@ -117,8 +117,8 @@ def format_sample_data(sample_data):
     #finally we convert to an array, then dataframe
     array = np.array(toFrame).reshape((1, 7))
 
-    df = pd.DataFrame(array, columns=['author', 'address1', 'date sampled', 'date received', 'date analyzed','address2', 'account'], dtype=str)
-    df = df[['author', 'address1', 'address2', 'date sampled', 'date received', 'date analyzed', 'account']]
+    df = pd.DataFrame(array, columns=['investigator', 'address1', 'date_sampled', 'date_received', 'date_analyzed','address2', 'account'], dtype=str)
+    df = df[['investigator', 'address1', 'address2', 'date_sampled', 'date_received', 'date_analyzed', 'account']]
     print(df)
     return df
 

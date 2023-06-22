@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import PyPDF2
 import re
+from format_sample_data import add_missing_columns
 
 sample_number = 0
 
@@ -71,10 +72,9 @@ def extract_sample_data(pdf_path, page):
         name_and_address += s[0]
     temp.append(name_and_address)
     sample_info2_data = np.array(temp).reshape(1,7)
-    sample_info2_data = pd.DataFrame(sample_info2_data, columns=['date sampled', 'date received', 'date printed', 'ST', 'CO', 'type', 'name and address'])
+    sample_info2_data = pd.DataFrame(sample_info2_data, columns=['date_sampled', 'date_received', 'date_printed', 'ST', 'CO', 'type', 'name and address'])
 
     sample_data = pd.concat([sample_info1_data, sample_info2_data], axis=1)
-    sample_data.drop(['kind', 'type'], axis = 1, inplace = True)
    
     institution  = sample_data['name and address'][0].split('-')[0]
     investigator = sample_data['name and address'][0].split('-')[1].split('|')[0]
@@ -83,12 +83,11 @@ def extract_sample_data(pdf_path, page):
 
     sample_data.drop('name and address', axis = 1, inplace = True)
 
-    sample_data[['date sampled', 'date received', 'date printed']]=sample_data[['date sampled', 'date received', 'date printed']].replace("","01/01/0000")
-    sample_data[['date sampled', 'date received', 'date printed']]=sample_data[['date sampled', 'date received', 'date printed']].fillna("01/01/0000")
+    sample_data[['date_sampled', 'date_received', 'date_printed']]=sample_data[['date_sampled', 'date_received', 'date_printed']].replace("","01/01/2001")
+    sample_data[['date_sampled', 'date_received', 'date_printed']]=sample_data[['date_sampled', 'date_received', 'date_printed']].fillna("01/01/2001")
 
     sample_data[['ST','CO','institution']]=sample_data[['ST','CO','institution']].replace("","None")
     sample_data[['ST','CO','institution']]=sample_data[['ST','CO','institution']].fillna("None")
-
     return sample_data
 
 
@@ -100,17 +99,18 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         sample_data = extract_sample_data(pdf_path, page_n)
         analysis_data = extract_component_data(pdf_path, page_n)
 
-        type = sample_data['type'][0]
+        type = sample_data['type'][0].split(' ')[1][:-1]
+        print(type)
         #check what sample['type'] is here and then add a suffix to name to indicate which, use this in process_pdf to decide where to upload
-        if type.lower().endswith('manure'):
+        if 'manure' in type.lower():
             suf = '_m'
-        elif type.lower().endswith('other'):
+        elif 'other' in type.lower():
             suf = '_o'
-        elif type.lower().endswith('dry ae'):
+        elif 'dry ae' in type.lower():
             suf = '_d'
-        elif type.lower().endswith('tmr'):
+        elif 'tmr' in type.lower():
             suf = '_t'
-        elif type.lower().endswith('grain'):
+        elif 'grain' in type.lower():
             suf = '_g'
         else: 
             suf = '_?'
@@ -127,10 +127,14 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].fillna(0)
         
         #analysis and sample data to separate csvs
+        sample_data.drop(['kind', 'type'], axis = 1, inplace = True)
+        sample_data = sample_data.rename(columns = {'sample description':'sample_type'})
+        sample_data = add_missing_columns(sample_data)
+        sample_data['sample_number'] = [sample_number]
         sample_data.to_csv(sample_filename, index=False, na_rep = 0)
         analysis_data.to_csv(analysis_filename, index=True, na_rep= 0)
     print("PDF read Success!")
 
 
 if __name__ == "__main__":
-    extract_sample_data('pdf/analysis1.pdf', 1)
+    extract_analysis_data_and_to_csv('pdf/analysis1.pdf', '')

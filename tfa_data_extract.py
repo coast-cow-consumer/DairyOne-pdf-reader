@@ -4,6 +4,7 @@ import tabula
 import pandas as pd
 import numpy as np
 import datetime
+from format_sample_data import add_missing_columns
 
 sample_number = 0
 
@@ -62,36 +63,37 @@ def extract_sample_data(pdf_path):
     
     sample_data = pd.DataFrame(data, columns=columns)
 
-    sample_data[['date sampled','date received', 'date mailed']] = sample_data[['date sampled','date received', 'date mailed']].fillna("01/01/0001")
-    # Convert the date format for 'date sampled', 'date received', and 'date mailed' columns
-    sample_data['date sampled'] = sample_data['date sampled'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
-    sample_data['date received'] = sample_data['date received'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
-    sample_data['date mailed'] = sample_data['date mailed'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
+    sample_data.rename(columns={'sample number': 'sample_number','date sampled': 'date_sampled', 'date received':'date_received', 'date mailed':'date_mailed', 'statement id':'statement_id'}, inplace=True)
+
+    sample_data[['date_sampled','date_received', 'date_mailed']] = sample_data[['date_sampled','date_received', 'date_mailed']].fillna("01/01/0001")
+    # Convert the date format for 'date_sampled', 'date_received', and 'date_mailed' columns
+    sample_data['date_sampled'] = sample_data['date_sampled'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
+    sample_data['date_received'] = sample_data['date_received'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
+    sample_data['date_mailed'] = sample_data['date_mailed'].apply(lambda x: datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d'))
     return sample_data
 
 def extract_tfa_data_and_to_csv(pdf_path, dest_path):
     acid_data = extract_tfa_data(pdf_path)
     sample_data = extract_sample_data(pdf_path)
-    print(sample_data)
     
-    concat_data = pd.concat([sample_data['sample number'], acid_data], axis=1)
+    concat_data = pd.concat([sample_data['sample_number'], acid_data], axis=1)
     filename = dest_path + f'{sample_number}_t' + '.csv'
     concat_data.to_csv(filename, index=True, na_rep = 0)
 
-    sample_data[['date sampled', 'date received', 'date mailed']] = sample_data[['date sampled', 'date received', 'date mailed']].fillna('01/01/0000')
-    sample_data[['date sampled', 'date received', 'date mailed']] = sample_data[['date sampled', 'date received', 'date mailed']].replace("",'01/01/0000')
+    sample_data[['date_sampled', 'date_received', 'date_mailed']] = sample_data[['date_sampled', 'date_received', 'date_mailed']].fillna('01/01/0000')
+    sample_data[['date_sampled', 'date_received', 'date_mailed']] = sample_data[['date_sampled', 'date_received', 'date_mailed']].replace("",'01/01/0000')
 
     sample_data[['kind', 'description']] = sample_data[['kind', 'description']].fillna('None')
     sample_data[['kind', 'description']] = sample_data[['kind', 'description']].replace('', 'None')
 
-    sample_data['sample type'] = ['TFA']
+    sample_data['sample_type'] = ['TFA']
 
-    sample_data['statement id'].fillna(0, inplace = True)
-    sample_data['statement id'].replace("", 0, inplace = True)
-    print(sample_data)
+    sample_data['statement_id'].fillna(0, inplace = True)
+    sample_data['statement_id'].replace("", 0, inplace = True)
+
+    sample_data = add_missing_columns(sample_data)
 
     sample_data.to_csv(dest_path+f'{sample_number}_ts')
-    print("Success!")
 
 
 if __name__ == "__main__":
