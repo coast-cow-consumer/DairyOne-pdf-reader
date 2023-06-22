@@ -45,8 +45,7 @@ def extract_component_data(pdf_path, page):
         else:
             analysis_data.iloc[adjusted_crude_protein_row,2] = 0
 
-    # Print the modified DataFrame
-    print(analysis_data)
+    # return
     return analysis_data
 
 
@@ -90,7 +89,6 @@ def extract_sample_data(pdf_path, page):
     sample_data[['ST','CO','institution']]=sample_data[['ST','CO','institution']].replace("","None")
     sample_data[['ST','CO','institution']]=sample_data[['ST','CO','institution']].fillna("None")
 
-    print(sample_data)
     return sample_data
 
 
