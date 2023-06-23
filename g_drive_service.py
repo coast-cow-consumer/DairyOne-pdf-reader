@@ -1,5 +1,6 @@
 import io
 import os
+import googleapiclient
 from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.http import MediaFileUpload
 from googleapiclient.discovery import build
@@ -56,6 +57,44 @@ class GDriveService:
 
         files_list = s.files().list(supportsTeamDrives=True, includeTeamDriveItems=True, corpora="drive", driveId=self.shared_drive_id, q="trashed = false").execute()
         return files_list.get("files")
+    
+    def Remove_All_Files(self, folder_id):
+        '''
+        Removes all files in the specified folder.
+        '''
+        files_list = self.List_Drive_Directory(folder_id)
+        if files_list:
+            for file in files_list:
+                file_id = file['id']
+                try:
+                    self.GD_serv.files().delete(fileId=file_id).execute()
+                    print(f"Deleted file: {file_id}")
+                except googleapiclient.errors.HttpError as e:
+                    print(f"Error deleting file: {file_id}")
+                    print(f"File name: {file['name']}")
+                    print(f"Error details: {e.content}")
+        else:
+            print("No files found in the folder.")
+
+    
+    def List_Drive_Directory(self, folder_id):
+        '''
+        List all the files and folders in the specified Google Drive directory.
+
+        Returns a list of dictionaries, where each entry represents a file or folder,
+        containing information about the item.
+        '''
+        query_string = f"'{folder_id}' in parents and trashed = false"
+        drive_service = self.GD_serv
+        files_list = drive_service.files().list(
+            supportsTeamDrives=True,
+            includeTeamDriveItems=True,
+            corpora='drive',
+            driveId=self.shared_drive_id,
+            q=query_string
+        ).execute()
+        return files_list.get('files', [])
+    
 
     def List_PDF_Folder(self, folder_name):
         '''

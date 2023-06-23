@@ -93,7 +93,7 @@ def extract_tfa_data_and_to_csv(pdf_path, dest_path):
 
     sample_data = add_missing_columns(sample_data)
 
-    sample_data.to_csv(dest_path+f'{sample_number}_ts.csv')
+    sample_data.to_csv(dest_path+f'{sample_number}_ts.csv', index = False)
 
 
 if __name__ == "__main__":

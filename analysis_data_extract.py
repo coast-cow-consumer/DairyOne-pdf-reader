@@ -89,7 +89,6 @@ def extract_sample_data(pdf_path, page):
    
     institution  = sample_data['name and address'][0].split('-')[0]
     investigator = sample_data['name and address'][0].split('-')[1].split('|')[0]
-    print(investigator)
     sample_data[['institution','investigator']] = [institution, investigator]
     if string == "":
         string = "None"
@@ -113,20 +112,25 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         analysis_data = extract_component_data(pdf_path, page_n)
 
         type = sample_data['type'][0].split(' ')[1][:-1]
-        print(type)
         #check what sample['type'] is here and then add a suffix to name to indicate which, use this in process_pdf to decide where to upload
         if 'manure' in type.lower():
             suf = '_m'
+            typestr = 'manure'
         elif 'other' in type.lower():
             suf = '_o'
+            typestr = 'other'
         elif 'dry ae' in type.lower():
             suf = '_d'
+            typestr = 'dry ae'
         elif 'tmr' in type.lower():
             suf = '_t'
+            typestr = 'tmr'
         elif 'grain' in type.lower():
             suf = '_g'
+            typestr = 'grain'
         else: 
             suf = '_?'
+            typestr = '?'
 
 
         sample_filename = dest_folder + f'{sample_number}_s'+suf + '.csv'
@@ -140,7 +144,8 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].fillna(0)
         
         #analysis and sample data to separate csvs
-        sample_data.drop(['kind', 'type'], axis = 1, inplace = True)
+        sample_data['type'] = [typestr]
+        sample_data['kind'] = [type]
         sample_data = sample_data.rename(columns = {'sample description':'sample_type'})
         sample_data = add_missing_columns(sample_data)
         sample_data['sample_number'] = [sample_number]
