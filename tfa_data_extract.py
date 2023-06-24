@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import datetime
 from format_sample_data import add_missing_columns
+from format_sample_data import format_date_cols
 
 sample_number = 0
 
@@ -88,10 +89,14 @@ def extract_tfa_data_and_to_csv(pdf_path, dest_path):
 
     sample_data['sample_type'] = ['TFA']
 
+    #rename mailed to printed since other types use this language
+    sample_data = sample_data.rename(columns={'date_mailed': 'date_printed'})
+
     sample_data['statement_id'].fillna(0, inplace = True)
     sample_data['statement_id'].replace("", 0, inplace = True)
 
     sample_data = add_missing_columns(sample_data)
+    sample_data = format_date_cols(sample_data)
 
     sample_data.to_csv(dest_path+f'{sample_number}_ts.csv', index = False)
 

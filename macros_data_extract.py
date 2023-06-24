@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import PyPDF2
 from format_sample_data import add_missing_columns
+from format_sample_data import format_date_cols
 
 sample_number = 0
 
@@ -89,6 +90,7 @@ def extract_macro_data_and_to_csv(pdf_path, dest_path):
     print(sample_data)
     print(type(sample_data))
     sample_data = add_missing_columns(sample_data)
+    sample_data = format_date_cols(sample_data)
     sample_data.to_csv(sample_file, index=False, na_rep = 0)
 
     #finished
@@ -121,13 +123,14 @@ def format_sample_data(sample_data):
     array = np.array(toFrame).reshape((1, 8))
 
     df = pd.DataFrame(array, columns=['investigator', 'address1', 'date_sampled', 'date_received', 'date_analyzed','address2', 'sample_number', 'comments'], dtype=str)
-    df = df[['investigator', 'address1', 'address2', 'date_sampled', 'date_received', 'date_analyzed', 'sample_number', 'comments']]
+    df['sample_type'] = ['macro']
+    df = df[['investigator','sample_type', 'address1', 'address2', 'date_sampled', 'date_received', 'date_analyzed', 'sample_number', 'comments']]
     return df
 
     
 
 if __name__ == "__main__":
-    extract_macro_data_and_to_csv('pdf/analysis2.pdf', '')
+    extract_macro_data_and_to_csv('unique_pdf/analysis2.pdf', '')
     #extract_macro_data('analysis2.pdf', 2)
     # data = get_sample_data('pdf/analysis2.pdf')
     # print(data)

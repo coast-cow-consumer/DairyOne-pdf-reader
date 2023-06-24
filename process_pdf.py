@@ -61,7 +61,7 @@ if __name__ == "__main__":
                     dest = serv.unrecognized_folder_id
                 serv.upload(f_path, f, dest, "CSV")
     #clear csv directory
-    shutil.rmtree(analysis_csv_path)     
+    #shutil.rmtree(analysis_csv_path)     
     # once everything has happened, move pdfs in drive to used folder
     for f in files_analysis_pdf_folder:
         serv.Move_File(f[0], serv.used_PDF_folder_id)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
         if os.path.isfile(os.path.join(tfa_csv_path, f)) and not f.startswith('.'):
                 f_path = os.path.join(tfa_csv_path, f)
                 serv.upload(f_path, f, serv.tfa_folder_id, "CSV")
-    shutil.rmtree(tfa_csv_path) 
+    # shutil.rmtree(tfa_csv_path) 
     # once everything has happened, move pdfs in drive to used folder
     for f in files_tfa_pdf_folder:
         serv.Move_File(f[0], serv.used_PDF_folder_id)
@@ -178,7 +178,7 @@ if __name__ == "__main__":
         if os.path.isfile(os.path.join(macro_csv_path, f)) and not f.startswith('.'):
             f_path = os.path.join(macro_csv_path, f)
             serv.upload(f_path, f, serv.macro_folder_id, "CSV")
-    shutil.rmtree(macro_csv_path) 
+    #shutil.rmtree(macro_csv_path) 
     # once everything has happened, move pdfs in drive to used folder
     for f in files_macro_pdf_folder:
         serv.Move_File(f[0], serv.used_PDF_folder_id)

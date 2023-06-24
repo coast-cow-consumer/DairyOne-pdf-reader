@@ -6,6 +6,7 @@ import numpy as np
 import PyPDF2
 import re
 from format_sample_data import add_missing_columns
+from format_sample_data import format_date_cols
 
 sample_number = 0
 
@@ -119,7 +120,7 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         elif 'other' in type.lower():
             suf = '_o'
             typestr = 'other'
-        elif 'dry ae' in type.lower():
+        elif 'ae' in type.lower():
             suf = '_d'
             typestr = 'dry ae'
         elif 'tmr' in type.lower():
@@ -144,11 +145,12 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].fillna(0)
         
         #analysis and sample data to separate csvs
-        sample_data['type'] = [typestr]
-        sample_data['kind'] = [type]
-        sample_data = sample_data.rename(columns = {'sample description':'sample_type'})
+        sample_data['sample_type'] = [typestr]
+        sample_data = sample_data.drop(columns = ['kind'])
+        sample_data = sample_data.rename(columns = {'sample description':'kind'})
         sample_data = add_missing_columns(sample_data)
         sample_data['sample_number'] = [sample_number]
+        sample_data = format_date_cols(sample_data)
         sample_data.to_csv(sample_filename, index=False, na_rep = 0)
         analysis_data.to_csv(analysis_filename, index=True, na_rep= 0)
     print("PDF read Success!")
