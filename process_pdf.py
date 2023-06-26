@@ -106,42 +106,6 @@ if __name__ == "__main__":
     # once everything has happened, move pdfs in drive to used folder
     for f in files_tfa_pdf_folder:
         serv.Move_File(f[0], serv.used_PDF_folder_id)
-    
-
-    #FERMENT
-
-    ferment_items = serv.List_PDF_Folder("ferment")
-    files_ferment_pdf_folder = []
-    print("Downloaded Fermentation Files:")
-    for f in ferment_items:
-        print("\t",f["name"], f["id"], f.get("parents"))
-        files_ferment_pdf_folder.append( (f["id"], f["name"],) ) # append tuple with name and id
-
-    # create a folder on the vm to store the downloaded files
-    ferment_pdf_download_path = "ferment_target/"
-    if not os.path.exists(ferment_pdf_download_path):
-        os.makedirs(ferment_pdf_download_path)
-
-    # download files to that folder
-    for f in files_ferment_pdf_folder:
-        location = ferment_pdf_download_path+f[1]
-        serv.download(f[0],location)
-
-    # create folder to place csv in on vm
-    ferment_path = 'ferm_csv/'
-    if not os.path.exists(ferment_path):
-        os.makedirs(ferment_path)
-
-    # process the files into folder created above
-    for f in files_ferment_pdf_folder:
-        extract_fermentation_data_and_to_csv(ferment_pdf_download_path+f[1], ferment_path)
-
-    # loop through files in analysis folder, and upload those to drive
-    for f in os.listdir(ferment_path):
-        if os.path.isfile(os.path.join(ferment_path, f)) and not f.startswith('.'):
-                f_path = os.path.join(ferment_path, f)
-                serv.upload(f_path, f, serv.ferment_folder_id, "CSV")
-    shutil.rmtree(ferment_path)  
 
     #MACRO
 

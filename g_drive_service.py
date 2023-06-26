@@ -19,27 +19,25 @@ class GDriveService:
     '''
     def __init__(self):
         self.scopes=['https://www.googleapis.com/auth/drive']
-        self.shared_drive_id = "0AO91Y0GEzJTeUk9PVA"
+        self.shared_drive_id = "0ABU_pocBghzEUk9PVA"
 
         #where people should drop the pdfs
-        self.ANALYSIS_folder_id = "1NrRZ6tEIdx63QFbdGokC_0bH29V8aMQH"
-        self.TFA_folder_id = "1ot28BzE_PTNnyLcbTwZpBaPR2bXyLtpS"
-        self.FERMENT_folder_id = "1Fjk0Ee_QDKJAlhgpDdn1K0v53HiJQ7A4"
-        self.MACRO_folder_id = "1iUGzaKqiuc_CanB65pHLCyEi2dx-pAKg"
+        self.ANALYSIS_folder_id = "1DDPpLVPx2IK6WKtS2uclE5l20VUItOYP"
+        self.TFA_folder_id = "1HTCUDwi-fvUYISCHKEmWmzw2Pe8cXs43"
+        self.MACRO_folder_id = "1uRxaoFcShtLgweFuIRLdEuTNqwolNiOE"
 
         self.PDF_folder_id = "1QJg2gqGf_QK48w51NwNucWXn9BLpiSYn"
         self.used_PDF_folder_id = "17rldCORuNDIxYsksGE2U6XtMVz9_O-6I"
 
         #destination for processed data
         self.tfa_folder_id = "1KmVmrCdHI9uW5fmoWGtXXtgiowjMVpT8"
-        self.ferment_folder_id = "1NGqxRp7TxfMf8wJqsSlCSEkw8FZVjdj0"
-        self.macro_folder_id = "1ACAgpVIQ8qtc8zGlwTeeacVm53N6TKCQ"
-        self.manure_folder_id = "1UQZwSe-Jw9veGuzal95CGkDPgHbeq0Rm"
-        self.other_folder_id = "13pPLT3W57kt33-b3hk0sPhNrCQhEiMQw"
-        self.dryae_folder_id = "1tyALzNWACJBtwTmhqWI1x22KQvt4HCni"
-        self.tmr_folder_id = "17IdBF9j86HRdhmJzeJQKzGO7x_33MZGw"
-        self.grain_folder_id = "1KcDeUMyF7Aw8UwLcrkwW7uHZsyqgYZMj"
-        self.unrecognized_folder_id = "13cFzj2gH28irA69WxsnXQyZqTG7fcFfJ"
+        self.macro_folder_id = "1ZoRfBaTe-LWkEuXsZNQt1-Zampxcv2At"
+        self.manure_folder_id = "1JnlBbLI5lUNbHFyMHhbDtmGjUT1bDwNj"
+        self.other_folder_id = "1FPJEMnXTfbp8qddXX7JQlVPUGodkSMzn"
+        self.dryae_folder_id = "1vYscfLouxhBFWkF425tGswKevHcGcBoy"
+        self.tmr_folder_id = "18KvxHQQnGsOroCt7GmGQCn6LVM3Grx8"
+        self.grain_folder_id = "1QLWhZC1Fux2_5ssrH08dZ-y0fQOmBEC8"
+        self.unrecognized_folder_id = "1yVZe2sYGxuuXo6YPvsbkhGUN02KrbazL"
         #command line: export DRIVE_KEY = "path/to/keyfile.json"
         keyfile = '/Users/gordondoore/Desktop/testfolder/service_acc_key_1.json'
         creds = ServiceAccountCredentials.from_json_keyfile_name(keyfile, self.scopes)
@@ -107,8 +105,6 @@ class GDriveService:
             pdf_folder = self.ANALYSIS_folder_id
         elif folder_name.lower() == "tfa":
             pdf_folder = self.TFA_folder_id
-        elif folder_name.lower() == "ferment":
-            pdf_folder = self.FERMENT_folder_id
         elif folder_name.lower() == "macro":
             pdf_folder = self.MACRO_folder_id
         else:
