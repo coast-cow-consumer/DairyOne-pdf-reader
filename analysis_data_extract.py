@@ -25,6 +25,7 @@ def extract_component_data(pdf_path, page):
     # handle raw_analysis_np
     raw_analysis_np = np.array(raw_analysis)[0]
     analysis_data = []
+    print(raw_analysis_np)
     for raw_datum in raw_analysis_np:
         s :list = raw_datum[0].replace(" ", "").split('|')[:3]
         if len(s) == 3 and s[0] != '':
@@ -32,7 +33,6 @@ def extract_component_data(pdf_path, page):
             analysis_data.append(s)
     analysis_data[0][0] = 'sample number'
     analysis_data = pd.DataFrame(analysis_data[1:], columns=analysis_data[0])
-
     adjusted_crude_protein_row = analysis_data[analysis_data['Components'].str.contains('AdjustedCrudeProtein', regex=True)].index.max()
 
     #fixing column recognition issue with adjusted crude protein
@@ -47,6 +47,7 @@ def extract_component_data(pdf_path, page):
         else:
             analysis_data.iloc[adjusted_crude_protein_row,2] = 0
 
+    print(analysis_data)
     # return
     return analysis_data
 
@@ -137,8 +138,12 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
         sample_filename = dest_folder + f'{sample_number}_s'+suf + '.csv'
         analysis_filename = dest_folder + f'{sample_number}_a'+suf + '.csv'
 
-        #remove special characters from analysis_data:
-        analysis_data['Components'] = analysis_data['Components'].str.replace('[^a-zA-Z0-9_  ]', '', regex=True)
+        #remove special characters from analysis_data and fix word formatting:
+        analysis_data['Components'] = analysis_data['Components'].str.replace('%', '')  # Remove '%'
+        analysis_data['Components'] = analysis_data['Components'].str.replace(r'([a-z])([A-Z])', r'\1 \2', regex = True)  # Add spaces between words
+        analysis_data['Components'] = analysis_data['Components'].str.replace('PPM', 'PPM ')  # Add space after 'PPM'
+        analysis_data['Components'] = analysis_data['Components'].str.replace('a NDF', 'aNDF')  # aNDF fix
+        
         #set nan values to 0:
         analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].replace('',0)
         analysis_data[['AsFed', 'DM']] = analysis_data[['AsFed', 'DM']].replace('[^0-9\.]','', regex = True)
@@ -157,5 +162,6 @@ def extract_analysis_data_and_to_csv(pdf_path, dest_folder):
 
 
 if __name__ == "__main__":
-    extract_analysis_data_and_to_csv('pdf/analysis1.pdf', '')
+    extract_analysis_data_and_to_csv('unique_pdf/analysis1.pdf', 'unique_pdf/')
     #extract_sample_data('pdf/analysis1.pdf', 2)
+    #extract_component_data('unique_pdf/analysis1.pdf', 1)

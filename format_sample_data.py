@@ -23,7 +23,7 @@ def format_date_cols(df):
     date_columns = [col for col in df.columns if col.startswith('date')]
     for col in date_columns:
         df[col] = pd.to_datetime(df[col], errors='coerce').dt.strftime('%Y-%m-%d')
-        if df[col][0] ==[""]:
+        if not pd.notna(df[col][0]):
             df[col] = ["2001-01-01"]
     return df
 
